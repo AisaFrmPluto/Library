@@ -2,40 +2,23 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Library {
-    public List<Book> books;
+    private final List<Book> books;
 
     public Library() {
         this.books = new ArrayList<>();
     }
 
-    public void addBook(Book bookToAdd) {
-        for (Book book : books) {
-            assert bookToAdd != null;
-            if (book.getTitle().equals(bookToAdd.getTitle()) && book.getAuthor().equals(bookToAdd.getAuthor())) {
-                bookToAdd = null;
-                break;
-            } else bookToAdd = book;
-        }
-        if (bookToAdd != null) {
+    public boolean addBook(Book bookToAdd) {
+        if (books.contains(bookToAdd)) {
+            return false;
+        } else {
             books.add(bookToAdd);
-            System.out.println("The book \"" + bookToAdd.getTitle() + "\" by " + bookToAdd.getAuthor()
-                    + " is added to the library.");
-        } else System.out.println("Book already in the library.");
+            return true;
+        }
     }
 
-    public void removeBook(Book bookToRemove) {
-        for (Book book : books) {
-            assert bookToRemove != null;
-            if (book.getTitle().equals(bookToRemove.getTitle()) && book.getAuthor().equals(bookToRemove.getAuthor())) {
-                bookToRemove = book;
-                break;
-            } else bookToRemove = null;
-        }
-        if (bookToRemove != null) {
-            books.remove(bookToRemove);
-            System.out.println("The book \"" + bookToRemove.getTitle() + "\" by " + bookToRemove.getAuthor()
-                    + " is removed from the library.");
-        } else System.out.println("Book not found in the library.");
+    public boolean removeBook(Book bookToRemove) {
+        return books.remove(bookToRemove);
     }
 
     public void changeTitle(Book book, String newTitle) {
@@ -52,58 +35,60 @@ public class Library {
 
     public void moveBook(Book book, String newCodeShelf) {
         book.setCodeShelf(newCodeShelf);
-        System.out.println("The book \"" + book.getTitle() + "\" by " + book.getAuthor()
-                + " is moved to shelf " + newCodeShelf + ".");
     }
 
-    public void searchByAuthor(String author) {
+    public List<Book> searchByAuthor(String author) {
+        List<Book> result = new ArrayList<>();
         for (Book book : books) {
             if (book.getAuthor().equals(author)) {
-                System.out.println(book.getTitle() + "\" By " + book.getAuthor());
-            } else System.out.println("Nothing is found.");
+                result.add(book);
+            }
         }
+        return result;
     }
 
-    public void searchByTitle(String title) {
+    public List<Book> searchByTitle(String title) {
+        List<Book> result = new ArrayList<>();
         for (Book book : books) {
             if (book.getTitle().equals(title)) {
-                System.out.println(book.getTitle() + "\" By " + book.getAuthor() + " is a "
-                        + book.getGenre() + " book.");
-            } else System.out.println("Nothing is found.");
+                result.add(book);
+            }
         }
+        return result;
     }
 
-    public void searchByGenre(String genre) {
+    public List<Book> searchByGenre(String genre) {
+        List<Book> result = new ArrayList<>();
         for (Book book : books) {
             if (book.getGenre().equals(genre)) {
-                System.out.println(book.getTitle() + "\" By " + book.getAuthor() + " is a "
-                        + book.getGenre() + " book.");
-            } else System.out.println("Nothing is found.");
+                result.add(book);
+            }
         }
+        return result;
     }
 
-    public void searchByShelfCode(String codeShelf) {
+    public List<Book> searchByShelfCode(String codeShelf) {
+        List<Book> result = new ArrayList<>();
         for (Book book : books) {
             if (book.getCodeShelf().equals(codeShelf)) {
-                System.out.println(book.getTitle() + "\" By " + book.getAuthor() + " is on the shelf Number: "
-                        + book.getCodeShelf());
-            } else System.out.println("Nothing is found.");
+                result.add(book);
+            }
         }
+        return result;
     }
 
-    public void searchByTitleKeyword(String keyword) {
+    public List<Book> searchByTitleKeyword(String keyword) {
+        List<Book> result = new ArrayList<>();
         for (Book book : books) {
             if (book.getTitle().toLowerCase().contains(keyword.toLowerCase())) {
-                System.out.println(book.getTitle() + "\" By " + book.getAuthor());
-            } else System.out.println("Nothing is found.");
+                result.add(book);
+            }
         }
+        return result;
     }
 
-    public void printLibrary() {
-        System.out.println("Library:");
-        for (Book book : books) {
-            System.out.println("- \"" + book.getTitle() + "\" By " + book.getAuthor());
-        }
+    public List<Book> getBooks() {
+        return books;
     }
 }
 
@@ -113,6 +98,7 @@ class Book {
     private String genre;
     private String codeShelf;
 
+    //Constructor to initialize variables
     public Book(String title, String author, String genre, String codeShelf) {
         this.title = title;
         this.author = author;
@@ -120,6 +106,7 @@ class Book {
         this.codeShelf = codeShelf;
     }
 
+    //Getters and setters to access and modify variables
     public String getTitle() {
         return title;
     }

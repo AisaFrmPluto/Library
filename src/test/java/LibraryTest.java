@@ -1,118 +1,45 @@
-import java.util.Scanner;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
+import java.util.List;
 
 public class LibraryTest {
-    public static void main(String[] args) {
-        Library library = new Library();
-        Scanner scanner = new Scanner(System.in);
-        String input = "";
-        System.out.println("Hello! Welcome to your library! If you want help knowing the commands available, " +
-                "enter \"help\".");
-        while (!input.equals("quit")) {
-            System.out.print("Enter a command: ");
-            input = scanner.nextLine();
-            String[] tokens = input.split("-");
-            switch (tokens[0]) {
-                case "add" -> {
-                    String title = tokens[1];
-                    String author = tokens[2];
-                    String genre = tokens[3];
-                    String shelfCode = tokens[4];
-                    Book book = new Book(title, author, genre, shelfCode);
-                    library.addBook(book);
-                }
-                case "searchByAuthor" -> {
-                    String authorName = tokens[1];
-                    library.searchByAuthor(authorName);
-                }
-                case "searchByTitle" -> {
-                    String titleKeyword = tokens[1];
-                    library.searchByTitle(titleKeyword);
-                }
-                case "searchByGenre" -> {
-                    String genreName = tokens[1];
-                    library.searchByGenre(genreName);
-                }
-                case "searchByShelfCode" -> {
-                    String shelfCodeName = tokens[1];
-                    library.searchByShelfCode(shelfCodeName);
-                }
-                case "searchByTitleKeyword" -> {
-                    String keyword = tokens[1];
-                    library.searchByTitleKeyword(keyword);
-                }
-                case "remove" -> {
-                    String title = tokens[1];
-                    String author = tokens[2];
-                    Book bookToRemove = null;
-                    for (Book book : library.books) {
-                        if (book.getTitle().equals(title) && book.getAuthor().equals(author)) {
-                            bookToRemove = book;
-                            break;
-                        }
-                    }
-                    if (bookToRemove != null) {
-                        library.removeBook(bookToRemove);
-                    } else System.out.println("Book not found in the library.");
-                }
-                case "move" -> {
-                    String title = tokens[1];
-                    String author = tokens[2];
-                    String newCodeShelf = tokens[3];
-                    Book bookToMove = new Book(title, author, "", newCodeShelf);
-                    library.moveBook(bookToMove, newCodeShelf);
-                }
-                case "changeTitle" -> {
-                    String title = tokens[1];
-                    String author = tokens[2];
-                    String newTitle = tokens[3];
-                    Book bookToChange = new Book(title, author, "", "");
-                    library.changeTitle(bookToChange, newTitle);
-                }
-                case "changeAuthor" -> {
-                    String title = tokens[1];
-                    String author = tokens[2];
-                    String newAuthor = tokens[3];
-                    Book bookToChange = new Book(title, author, "", "");
-                    library.changeAuthor(bookToChange, newAuthor);
-                }
-                case "changeGenre" -> {
-                    String title = tokens[1];
-                    String genre = tokens[2];
-                    String newGenre = tokens[3];
-                    Book bookToChange = new Book(title, genre, "", "");
-                    library.changeGenre(bookToChange, newGenre);
-                }
+    private static Library library;
+    private static Book book1;
+    private static Book book2;
+    private static Book book3;
 
-                case "print" -> {
-                    if (library.books.isEmpty()) {
-                        System.out.println("The library is empty.");
-                    } else library.printLibrary();
-                }
+    @BeforeEach
+    public void setUp() {
+        library = new Library();
+        book1 = new Book("Harry Potter", "J.K. Rowling", "Fantasy", "F1");
+        book2 = new Book("Lord of the Rings", "J.R.R. Tolkien", "Fantasy", "F2");
+        book3 = new Book("The Hunger Games", "Suzanne Collins", "Philosophy", "F3");
+        library.addBook(book1);
+        library.addBook(book2);
+    }
 
-                case "help" -> {
-                    System.out.println("Available commands:");
-                    System.out.println("To add a book, use this syntax: add-title-author-genre-shelfCode");
-                    System.out.println("To search for a book by Author Name, use this syntax: " +
-                            "searchByAuthor-authorName");
-                    System.out.println("To search for a book by Title, use this syntax: searchByTitle-titleKeyword");
-                    System.out.println("To search for a book by Genre, use this syntax: searchByGenre-genreName");
-                    System.out.println("To search for a book by Shelf Code, use this syntax: " +
-                            "searchByShelfCode-shelfCodeName");
-                    System.out.println("To search for a book by Title Keyword, use this syntax: " +
-                            "searchByTitleKeyword-keyword");
-                    System.out.println("To remove a book, use this syntax: remove-title-author");
-                    System.out.println("To move a book, use this syntax: move-title-author-shelfCode");
-                    System.out.println("To change The Title, use this syntax: " +
-                            "changeTitle-title-author-newTitle");
-                    System.out.println("To change The Author name, use this syntax: " +
-                            "changeAuthor-title-author-newAuthor");
-                    System.out.println("To change The Genre, use this syntax: changeGenre-title-author-newGenre");
-                    System.out.println("print");
-                    System.out.println("help");
-                }
-                case "quit" -> System.out.println("Goodbye !");
-                default -> System.out.println("Invalid command. Type \"help\" for a list of available commands.");
-            }
-        }
+    @Test
+    public void tests() {
+        Assertions.assertTrue(library.removeBook(book1));
+        Assertions.assertFalse(library.removeBook(book3));
+        Assertions.assertTrue(library.addBook(book3));
+        Assertions.assertTrue(library.addBook(book1));
+        Assertions.assertFalse(library.addBook(book2));
+        library.changeTitle(book1, "Harry Potter and the Philosopher's Stone");
+        Assertions.assertEquals("Harry Potter and the Philosopher's Stone", book1.getTitle());
+        library.changeAuthor(book1, "Rowling"); //
+        Assertions.assertEquals("Rowling", book1.getAuthor());
+        library.changeGenre(book1, "Children's literature");
+        Assertions.assertEquals("Children's literature", book1.getGenre());
+        library.moveBook(book1, "C1");
+        Assertions.assertEquals("C1", book1.getCodeShelf());
+        Assertions.assertEquals(List.of(book1), library.searchByAuthor("Rowling"));
+        Assertions.assertEquals(List.of(book2), library.searchByTitle("Lord of the Rings"));
+        Assertions.assertEquals(List.of(book3), library.searchByGenre("Philosophy"));
+        Assertions.assertEquals(List.of(book1), library.searchByShelfCode("C1"));
+        Assertions.assertEquals(List.of(book3), library.searchByTitleKeyword("Hunger"));
+        Assertions.assertEquals(List.of(book2, book3, book1), library.getBooks());
     }
 }
